@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+  postgres:
+    image: bitnami/postgresql:latest
+    platform: linux/amd64
+    container_name: kc-db
+    restart: always
+    tty: true
+    ports:
+      - '5432:5432'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - POSTGRESQL_USERNAME=bn_keycloak
+      - POSTGRESQL_DATABASE=bitnami_keycloak
+    volumes:
+      - pgdata:/bitnami/postgresql
+
+  keycloak:
+    image: bitnami/keycloak:latest
+    platform: linux/amd64
+    container_name: keycloak
+    environment:
+      - KEYCLOAK_DATABASE_HOST=postgres
+    ports:
+      - '80:8080'
+    depends_on:
+      - postgres
+
+volumes:
+  pgdata:
+    driver: local
